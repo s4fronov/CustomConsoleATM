@@ -1,11 +1,9 @@
-﻿using CustomConsoleATM.Services;
-
-namespace CustomConsoleATM.Centers
+﻿namespace CustomConsoleATM.Centers
 {
     public class ATMTransactionCenter
     {
         public int WithdrawalAmount { get; set; }
-        public Dictionary<int, int> BanknotesAmountsToWithdraw { get; set; } = new Dictionary<int, int>();
+        public Dictionary<int, int> BanknotesAmountsToWithdraw { get; set; }
 
         private ATMStorageCenter StorageCenter { get; set; }
         public int Balance { get; private set; }
@@ -13,16 +11,17 @@ namespace CustomConsoleATM.Centers
 
         public ATMTransactionCenter()
         {
-            var _storageCenter = new ATMStorageCenter();
-            _storageCenter.ReadStorageState();
-            StorageCenter = _storageCenter;
-            Balance = _storageCenter.Balance;
-            BanknotesAmountsInATM = _storageCenter.BanknotesAmounts;
+            var storageCenter = new ATMStorageCenter();
+            storageCenter.ReadStorageState();
+            StorageCenter = storageCenter;
+            Balance = storageCenter.Balance;
+            BanknotesAmountsInATM = storageCenter.BanknotesAmounts;
+            BanknotesAmountsToWithdraw = new Dictionary<int, int>();
         }
 
         public void Withdraw()
         {
-            var newBanknotesAmounts = ATMInformer.GetInfoAboutBanknotesAmountsToWithdraw(BanknotesAmountsInATM, BanknotesAmountsToWithdraw);
+            GetInfoAboutBanknotesAmountsToWithdraw();
 
             StorageCenter.Balance -= WithdrawalAmount;
 
@@ -31,7 +30,20 @@ namespace CustomConsoleATM.Centers
             Console.WriteLine();
             Console.WriteLine($"Your balance: ${StorageCenter.Balance}");
 
-            StorageCenter.SaveStorageState(newBanknotesAmounts);
+            StorageCenter.SaveStorageState(BanknotesAmountsInATM);
+        }
+
+        private void GetInfoAboutBanknotesAmountsToWithdraw()
+        {
+            Console.WriteLine();
+            Console.WriteLine("Banknotes:");
+
+            foreach (var banknote in BanknotesAmountsInATM.Keys.Where(banknote => BanknotesAmountsToWithdraw[banknote] != 0))
+            {
+                Console.WriteLine($"{banknote}: {BanknotesAmountsToWithdraw[banknote]}");
+            }
+
+            Console.WriteLine();
         }
     }
 }

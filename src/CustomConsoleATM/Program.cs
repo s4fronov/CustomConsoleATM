@@ -1,3 +1,4 @@
 ﻿using CustomConsoleATM;
 
-ATM.Withdraw();
+var atm = new ATM();
+atm.Withdraw();

@@ -6,6 +6,7 @@
         {
             var banknotes = banknotesAmounts.Keys.OrderByDescending(x => x).ToArray();
             var banknotesAmountsToWithdraw = banknotes.ToDictionary(banknote => banknote, banknote => 0);
+            var checkSum = withdrawalAmount;
 
             while (withdrawalAmount > 0)
             {
@@ -17,25 +18,34 @@
                     var banknoteAmount = withdrawalAmount / banknote;
                     var remainder = withdrawalAmount - banknote * banknoteAmount;
 
-                    if (banknotes.Any(banknoteForCheck => remainder % banknoteForCheck != 0))
+                    if (remainder < banknotes.Min() &&
+                        banknotes.Any(x => remainder % x != 0))
                     {
                         banknoteAmount--;
                     }
 
+                    if (banknotesAmounts[banknote] < banknoteAmount)
+                    {
+                        banknoteAmount = banknotesAmounts[banknote];
+                    }
+
                     withdrawalAmount -= banknote * banknoteAmount;
+                    banknotesAmounts[banknote] -= banknoteAmount;
                     banknotesAmountsToWithdraw[banknote] = banknoteAmount;
                 }
 
-                if (withdrawalAmount == 0)
+                if (withdrawalAmount == 0 || 
+                    checkSum == withdrawalAmount ||
+                    withdrawalAmount < banknotesAmounts.Keys.Min())
                     break;
 
-                if (withdrawalAmount < banknotesAmounts.Keys.Min())
-                {
-                    throw new Exception("Error! It's impossible to withdraw such an amount");
-                }
+                checkSum = withdrawalAmount;
             }
 
-
+            if (withdrawalAmount != 0)
+            {
+                throw new Exception("Error! It's impossible to withdraw such an amount");
+            }
 
             return banknotesAmountsToWithdraw;
         }

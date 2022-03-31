@@ -3,34 +3,41 @@ using CustomConsoleATM.Services;
 
 namespace CustomConsoleATM
 {
-    public static class ATM
+    public class ATM
     {
-        public static void Withdraw()
-        {
-            bool isError = false;
-            var _transactionCenter = new ATMTransactionCenter();
+        private ATMTransactionCenter TransactionCenter { get; set; }
 
-            Console.WriteLine($"Your balance: ${_transactionCenter.Balance}");
+        public ATM()
+        {
+            var transactionCenter = new ATMTransactionCenter();
+            TransactionCenter = transactionCenter;
+        }
+
+        public void Withdraw()
+        {
+            var isError = false;
+
+            Console.WriteLine($"Your balance: ${TransactionCenter.Balance}");
 
             Console.WriteLine();
             Console.Write("Please enter the withdrawal amount: ");
 
-            _transactionCenter.WithdrawalAmount = Convert.ToInt32(Console.ReadLine());
+            TransactionCenter.WithdrawalAmount = Convert.ToInt32(Console.ReadLine());
 
-            if (_transactionCenter.WithdrawalAmount > 0 && _transactionCenter.Balance >= _transactionCenter.WithdrawalAmount)
+            if (TransactionCenter.WithdrawalAmount > 0 && TransactionCenter.Balance >= TransactionCenter.WithdrawalAmount)
             {
                 try
                 {
-                    _transactionCenter.BanknotesAmountsToWithdraw =
+                    TransactionCenter.BanknotesAmountsToWithdraw =
                         ATMCalculator.GetBanknotesAmountsToWithdraw(
-                            _transactionCenter.BanknotesAmountsInATM,
-                            _transactionCenter.WithdrawalAmount);
+                            TransactionCenter.BanknotesAmountsInATM,
+                            TransactionCenter.WithdrawalAmount);
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine();
                     Console.WriteLine(ex.Message);
-                    _transactionCenter.WithdrawalAmount = 0;
+                    TransactionCenter.WithdrawalAmount = 0;
                     isError = true;
                 }
             }
@@ -41,9 +48,9 @@ namespace CustomConsoleATM
             }
 
             if (!isError)
-                _transactionCenter.Withdraw();
+                TransactionCenter.Withdraw();
 
-            string status = isError ? "error" : "success";
+            var status = isError ? "error" : "success";
 
             Console.WriteLine();
             Console.WriteLine($"Withdrawal status is {status}!");

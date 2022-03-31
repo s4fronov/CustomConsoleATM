@@ -19,10 +19,10 @@ namespace CustomConsoleATM.Centers
 
             Balance = Int32.Parse(balanceMatch.Groups[2].Value);
 
-            foreach (Match banknoteAmountMatch in banknotesAmountsMatches)
+            foreach (var banknoteAmountGroup in banknotesAmountsMatches.Select(x => x.Groups))
             {
-                var banknote = Int32.Parse(banknoteAmountMatch.Groups[1].Value);
-                var amount = Int32.Parse(banknoteAmountMatch.Groups[3].Value);
+                var banknote = Int32.Parse(banknoteAmountGroup[1].Value);
+                var amount = Int32.Parse(banknoteAmountGroup[3].Value);
                 BanknotesAmounts.Add(banknote, amount);
             }
         }
@@ -31,9 +31,9 @@ namespace CustomConsoleATM.Centers
         {
             var result = new StringBuilder($"Balance: {Balance}\n\nBanknotes:\n");
 
-            foreach (var newBanknoteAmount in newBanknotesAmounts)
+            foreach (var (banknote, amount) in newBanknotesAmounts)
             {
-                result.Append($"{newBanknoteAmount.Key} - {newBanknoteAmount.Value}\n");
+                result.Append($"{banknote} - {amount}\n");
             }
 
             File.WriteAllText(@"..\..\..\BalanceAndBanknotesAmounts.txt", result.ToString());
