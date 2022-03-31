@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text;
+using System.Text.RegularExpressions;
 
 namespace CustomConsoleATM.Centers
 {
@@ -28,14 +29,14 @@ namespace CustomConsoleATM.Centers
 
         public void SaveStorageState(Dictionary<int, int> newBanknotesAmounts)
         {
-            string result = $"Balance: {Balance}\n\nBanknotes:\n";
+            var result = new StringBuilder($"Balance: {Balance}\n\nBanknotes:\n");
 
             foreach (var newBanknoteAmount in newBanknotesAmounts)
             {
-                result += $"{newBanknoteAmount.Key} - {newBanknoteAmount.Value}\n";
+                result.Append($"{newBanknoteAmount.Key} - {newBanknoteAmount.Value}\n");
             }
 
-            File.WriteAllText(@"..\..\..\BalanceAndBanknotesAmounts.txt", result);
+            File.WriteAllText(@"..\..\..\BalanceAndBanknotesAmounts.txt", result.ToString());
         }
     }
 }
